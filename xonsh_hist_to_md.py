@@ -9,7 +9,7 @@ ansi_escape = re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]')
 # simple input/output template in markdown
 md_in_out = jinja2.Template('''
 ```console
-{{ prompt }}{{ inp|indent(len(prompt) + 4)}}
+{{ prompt }} {{ inp|indent(prompt|length + 1)}}
 ```
 
 {% if outp.strip() %}
@@ -21,7 +21,7 @@ md_in_out = jinja2.Template('''
 # load xonsh history
 
 
-def render_io(history, prompt='🐚', file='test.md'):
+def render_io(history, prompt='$', file='test.md'):
     """Loop over history file, printing input and output if output is stored,
     otherwise print nothing
     """
