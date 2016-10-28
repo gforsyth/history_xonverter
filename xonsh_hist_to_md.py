@@ -1,4 +1,5 @@
 import re
+import sys
 import json
 import jinja2
 
@@ -7,17 +8,13 @@ ansi_escape = re.compile(r'\x1b[^m]*m')
 
 # simple input/output template in markdown
 md_in_out = jinja2.Template('''
-Input:
-
 ```console
-{{ inp }}
-```
+>>> {{ inp }}```
 
-Output:
-
+{% if outp.strip() %}
 ```console
-{{ outp }}
-```
+{{ outp }}```
+{% endif %}
 ''')
 
 # load xonsh history
@@ -28,14 +25,13 @@ def render_io(history, file='test.md'):
     otherwise print nothing
     """
     with open(file, 'a') as f:
-        for i in history['data']['cmds']:
-            if 'out' in i:
-                inp = ansi_escape.sub('', i['inp'])
-                out = ansi_escape.sub('', i['out'])
-                mdout = md_in_out.render(inp=inp, outp=out)
-                f.write(mdout)
+        for entry in [i for i in history['data']['cmds'] if 'out' in i]:
+            inp = ansi_escape.sub('', entry['inp'])
+            out = ansi_escape.sub('', entry['out'])
+            mdout = md_in_out.render(inp=inp, outp=out)
+            f.write(mdout)
 
 if __name__ == '__main__':
-    with open('history_ex.json', 'r') as f:
+    with open(sys.argv[1], 'r') as f:
         a = json.load(f)
     render_io(a)
