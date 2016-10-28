@@ -4,12 +4,13 @@ import json
 import jinja2
 
 # regex to remove escape sequences (markdown no like)
-ansi_escape = re.compile(r'\x1b[^m]*m')
+ansi_escape = re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]')
 
 # simple input/output template in markdown
 md_in_out = jinja2.Template('''
 ```console
->>> {{ inp }}```
+{{ prompt }}{{ inp|indent(len(prompt) + 4)}}
+```
 
 {% if outp.strip() %}
 ```console
