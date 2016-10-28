@@ -21,7 +21,7 @@ md_in_out = jinja2.Template('''
 # load xonsh history
 
 
-def render_io(history, file='test.md'):
+def render_io(history, prompt='🐚', file='test.md'):
     """Loop over history file, printing input and output if output is stored,
     otherwise print nothing
     """
@@ -29,7 +29,7 @@ def render_io(history, file='test.md'):
         for entry in [i for i in history['data']['cmds'] if 'out' in i]:
             inp = ansi_escape.sub('', entry['inp'])
             out = ansi_escape.sub('', entry['out'])
-            mdout = md_in_out.render(inp=inp, outp=out)
+            mdout = md_in_out.render(inp=inp, outp=out, prompt=prompt)
             f.write(mdout)
 
 if __name__ == '__main__':
