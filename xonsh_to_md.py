@@ -18,6 +18,7 @@ md_template = jinja2.Template('''
 {% endif %}
 ''')
 
+
 def get_parser():
     parser = argparse.ArgumentParser(description="""Naively render a xonsh
                                     history file into markdown""")
@@ -30,16 +31,18 @@ def get_parser():
 
     return parser
 
+
 def render_io(history, outfile, prompt):
     """Loop over history file, printing input and output if output is stored,
     otherwise print nothing
     """
     with open(outfile, 'a') as f:
-        for entry in [i for i in history['data']['cmds'] if 'out' in i]:
+        for entry in history['data']['cmds']:
             inp = ansi_escape.sub('', entry['inp'])
-            out = ansi_escape.sub('', entry['out'])
+            out = ansi_escape.sub('', entry.get('out', ''))
             mdout = md_template.render(inp=inp, outp=out, prompt=prompt)
             f.write(mdout)
+
 
 def main():
     parser = get_parser()
